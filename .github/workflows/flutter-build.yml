@@ -360,6 +360,10 @@ jobs:
           pip3 install requests argparse
           BASE_URL=${{ env.SIGN_BASE_URL }} SECRET_KEY=${{ secrets.SIGN_SECRET_KEY }} python3 res/job.py sign_files ./rustdesk/
 
+      - name: Add custom.txt
+        shell: bash
+        run: echo "${{ secrets.CUSTOM_TXT }}" > ./rustdesk/custom.txt
+
       - name: Build self-extracted executable
         shell: bash
         if: env.UPLOAD_ARTIFACT == 'true'
@@ -918,6 +922,9 @@ jobs:
             sed -i -e "s/MACOSX_DEPLOYMENT_TARGET = [0-9]*.[0-9]*;/MACOSX_DEPLOYMENT_TARGET = ${MIN_MACOS_VERSION};/" flutter/macos/Runner.xcodeproj/project.pbxproj
           fi
           ./build.py --flutter --hwcodec --unix-file-copy-paste ${{ matrix.job.extra-build-args }}
+
+      - name: Add custom.txt
+        run: echo "${{ secrets.CUSTOM_TXT }}" > ./flutter/build/macos/Build/Products/Release/RustDesk.app/Contents/Resources/custom.txt
 
       - name: create unsigned dmg
         if: env.UPLOAD_ARTIFACT == 'true'
